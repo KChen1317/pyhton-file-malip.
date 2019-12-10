@@ -5,7 +5,10 @@ import sys
 
 def main():
     x=init()
-    file_open(x[0],x[1])
+    file_name=x[0]
+    separate_file_flag=x[1]
+    sf_Flag=separate_file_flag
+    file_open(file_name,sf_Flag)
     close()
 
 def init():
@@ -18,7 +21,7 @@ def init():
         try:
             open(str(file_name))
         except FileNotFoundError:
-            open(str(file_name),"w+")
+            open(str(file_name),"w+")       ###swap with open(file,x)
             file_exist="N"
             print("File "+str(file_name)+" sucessfully created.")
         if file_exist=="Y":
@@ -46,7 +49,17 @@ def file_open(arg_1,arg_2):
         print("File "+str(file_name)+" was not found.")
 
 def file_add(arg_1):
-    close()
+    file_name=arg_1
+    write_to_file=input("Do you want to write data to "+str(file_name)+"?(Y/N)\n---->")
+    if write_to_file=="Y":
+        shift=input("shift?(in characters)")
+        try:
+            shift=int(shift)
+        except:
+            print("The offset is not an integer.\nDefaulting to a offset of 0.")
+            shift=0
+        data=input("Data to write?\n---->")
+    else:
 
 def close():
     close="NO"
