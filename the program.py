@@ -13,6 +13,8 @@ def main():
     file_name=x[0]
     busy_spin()
     file_read(file_name)
+    busy_spin()
+    file_append(file_name)
     close()
 
 def init():
@@ -106,24 +108,21 @@ def file_read(arg_1):
     file.close()
     print("File read module end.\n----------------")
 
-def file_add(arg_1):            ###TO DO###
+def file_append(arg_1):
     print("File append module start.")
-    file_name=arg_1
-    shift=input("shift?(in characters)")
-    file=open(file_name,"w+")
-    text = file.read().strip().split()
-    size = sum(len(word) for word in text)
-    try:
-        shift=int(shift)
-    except:
-        print("The offset is not an integer.\nDefaulting to a offset of 0.")
-        shift=0
-    if shift+1>size:
-        print("Defaulting")
-        shift=0
-    data=input("Data to write?\n---->")
+    run_module=input("Do you want to append data to the file?Y/N\n---->")
+    if run_module=="Y":
+        file_name=arg_1
+        file=open(file_name,"w+")
+        data=input("Data to write?\n---->")
+        file.append(data)
+        print("Data appended.")
+        print("File is\n"+str(file))
+        file.close()
+        print("File append module end.\n----------------")
+    else:
+        print("Module aborted")
     
-    quit()      ###replace with something else
 
 def busy_spin():
     leave="N"                   ###replace naive implentation later
@@ -133,6 +132,7 @@ def busy_spin():
 
 def close():
     close="NO"
+    print("Program finished execution.")
     while close!="quit":
         close=input("Enter quit to exit.\n---->")
     sys.exit
