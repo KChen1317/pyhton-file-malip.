@@ -57,8 +57,7 @@ def file_open(arg_1,arg_2):
     return(file_name)                           ###If a new file name was selected
                                                 ###;this will pass the new file name back
                                                 ###,else the original is sent
-
-def file_read(arg_1):            ####TO DO####
+def file_read(arg_1):
     print("File read module start.")
     file_name=arg_1
     file=open(file_name,"r+")           ####may need error condition for when file may not be read(eg. security or acl)####
@@ -104,22 +103,27 @@ def file_read(arg_1):            ####TO DO####
     data=file.read()
     print("Data is")
     print(str(data))
+    file.close()
     print("File read module end.\n----------------")
 
-def file_add(arg_1):
-    print("File write start.")
+def file_add(arg_1):            ###TO DO###
+    print("File append module start.")
     file_name=arg_1
-    write_to_file=input("Do you want to write data to "+str(file_name)+"?(Y/N)\n---->")
-    if write_to_file=="Y":
-        shift=input("shift?(in characters)")
-        try:
-            shift=int(shift)
-        except:
-            print("The offset is not an integer.\nDefaulting to a offset of 0.")
-            shift=0
-        data=input("Data to write?\n---->")
-    else:
-        quit()      ###replace with something else
+    shift=input("shift?(in characters)")
+    file=open(file_name,"w+")
+    text = file.read().strip().split()
+    size = sum(len(word) for word in text)
+    try:
+        shift=int(shift)
+    except:
+        print("The offset is not an integer.\nDefaulting to a offset of 0.")
+        shift=0
+    if shift+1>size:
+        print("Defaulting")
+        shift=0
+    data=input("Data to write?\n---->")
+    
+    quit()      ###replace with something else
 
 def busy_spin():
     leave="N"                   ###replace naive implentation later
