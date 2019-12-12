@@ -10,10 +10,8 @@ def main():
     sf_Flag=separate_file_flag
     busy_spin()
     x=file_open(file_name,sf_Flag)
-    print(str(x))
     file_name=x     #scince out put is not a list or tuple, we can directly assign the name over
     busy_spin()
-    print(str(file_name))
     file_read(file_name)
     busy_spin()
     file_append(file_name)
@@ -65,7 +63,6 @@ def file_open(arg_1,arg_2):
                                                 ###,else the original is sent
 def file_read(arg_1):
     print("File read module start.")
-    print(str(arg_1))
     file_name=arg_1
     file=open(file_name,"r+")           ####may need error condition for when file may not be read(eg. security or acl)####
     initial_offset=input("Initial offest?\n---->")
