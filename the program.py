@@ -15,7 +15,6 @@ def main():
     file_read(file_name)
     busy_spin()
     file_append(file_name)
-    close()
 
 def init():
     print("Note that all files generated and used are .txt files.")
@@ -146,7 +145,6 @@ def busy_spin():
     leave="N"                   ###replace naive implentation later
     while leave!="Y":
         leave=input("Procede?Y/N\n---->")
-    
 
 def close():
     close="NO"
