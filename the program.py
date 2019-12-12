@@ -10,8 +10,10 @@ def main():
     sf_Flag=separate_file_flag
     busy_spin()
     x=file_open(file_name,sf_Flag)
-    file_name=x[0]
+    print(str(x))
+    file_name=x     #scince out put is not a list or tuple, we can directly assign the name over
     busy_spin()
+    print(str(file_name))
     file_read(file_name)
     busy_spin()
     file_append(file_name)
@@ -32,19 +34,21 @@ def init():
         except FileExistsError:             ###if this error is thrown , we know that the file already exists
             print("File "+str(file_name)+" alredy exists.")
             print("Using given file name as target file.")
-        separate_file=input("Do you want to open a separte file?Y/N\n---->")
+        separate_file=input("Do you want to open a separate file?Y/N\n---->")
         if separate_file!="Y":              ###avoid issues with flags...
             separate_file="N"
     else:
         separate_file="N"
+        print("Aborting file creation.")
         file_name=input("Name of file to open?\n---->")
+        file_name=str(file_name)+'.txt'
     print("File create module end.\n----------------")
     return(separate_file,file_name)
 
 def file_open(arg_1,arg_2):
     if arg_1=="Y":
         new_file_name=input("Name of file to open?\n---->")
-        file_name=new_file_name
+        file_name=str(new_file_name)+".txt"
     else:
         file_name=arg_2
     print("File open module start")
@@ -61,16 +65,17 @@ def file_open(arg_1,arg_2):
                                                 ###,else the original is sent
 def file_read(arg_1):
     print("File read module start.")
+    print(str(arg_1))
     file_name=arg_1
     file=open(file_name,"r+")           ####may need error condition for when file may not be read(eg. security or acl)####
     initial_offset=input("Initial offest?\n---->")
-    final_offset=input("Final offset(note that this is measured from the start of the file)?\n----)")
+    final_offset=input("Final offset(note that this is measured from the start of the file)?\n---->")
     text = file.read().strip().split()
     size = sum(len(word) for word in text)
     type_check_init_offset="N"
     type_check_final_offset="N"
     checks_passed="N"
-    try:
+    try:                                    ####refactor checks into separate function...( check()?)
         initial_offset=int(initial_offset)
         type_check_init_offset="Y"
     except:
@@ -91,6 +96,8 @@ def file_read(arg_1):
         print("Defaulting to full file")
         initial_offset=0
         final_offset=size-1
+        if final_offset<0:      #handle a null file(size=0)
+            final_offset=0
         checks_passed="Y"
     if checks_passed!="Y":
         if initial_offset>size or final_offset>size:
@@ -98,13 +105,27 @@ def file_read(arg_1):
             print("Defaulting to reading full file.")
             initial_offset=0
             final_offset=size-1
+            if final_offset<0:
+                    final_offset=0
         else:
-            checks_passed="Y"
-    file.seek(initial_offset)
-    file.seek(final_offset-initial_offset,1)
-    data=file.read()
-    print("Data is")
-    print(str(data))
+            if final_offset<initial_offset:
+                print("Defaulting to full file")
+                initial_offset=0
+                final_offset=size-1
+                if final_offset<0:
+                    final_offset=0
+    if final_offset==0:
+        file.seek(initial_offset)
+        data=file.read()
+    else:
+        file.seek(initial_offset)
+        file.seek(final_offset-initial_offset,1)
+        data=file.read()
+    if initial_offset==final_offset and initial_offset==0:
+        print("The file "+str(file_name)+" is blank/empty.")    #handle null file
+    else:
+        print("Data is")
+        print(str(data))
     file.close()
     print("File read module end.\n----------------")
 
@@ -115,7 +136,7 @@ def file_append(arg_1):
         file_name=arg_1
         file=open(file_name,"w+")
         data=input("Data to write?\n---->")
-        file.append(data)
+        file.append(data)       #invalid methold, find new methold
         print("Data appended.")
         print("File is\n"+str(file))
         file.close()
