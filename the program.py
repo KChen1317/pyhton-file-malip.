@@ -15,6 +15,8 @@ def main():
     file_read(file_name)
     busy_spin()
     file_append(file_name)
+    busy_spin()
+    close()
 
 def init():
     print("Note that all files generated and used are .txt files.")
@@ -71,7 +73,7 @@ def file_read(arg_1):
     type_check_init_offset="N"
     type_check_final_offset="N"
     checks_passed="N"
-    try:                                    ####refactor checks into separate function...( check()?)
+    try:                                    ####refactor checks into separate function...( check()?) and needs to be able to handle str input
         initial_offset=int(initial_offset)
         type_check_init_offset="Y"
     except:
@@ -115,7 +117,7 @@ def file_read(arg_1):
         data=file.read()
     else:
         file.seek(initial_offset)
-        file.seek(final_offset-initial_offset,1)
+        file.seek(final_offset-initial_offset,1)    ##update scince this methold does not work to read up to a limit
         data=file.read()
     if initial_offset==final_offset and initial_offset==0:
         print("The file "+str(file_name)+" is blank/empty.")    #handle null file
@@ -130,21 +132,97 @@ def file_append(arg_1):
     run_module=input("Do you want to append data to the file?Y/N\n---->")
     if run_module=="Y":
         file_name=arg_1
-        file=open(file_name,"w+")
+        file=open(file_name,"a+")       #this mode starts the pointer at the end of the file always.
         data=input("Data to write?\n---->")
-        file.append(data)       #invalid methold, find new methold
+        file.write(data)
         print("Data appended.")
-        print("File is\n"+str(file))
+        file.seek(0)
+        file_data=file.read()
+        print("File is\n"+str(file_data))
         file.close()
         print("File append module end.\n----------------")
     else:
         print("Module aborted")
-    
+
+def file_add(arg_1):
+    file_name=arg_1
+    print("File write module start.")
+    terminate="No"
+    display_result=input("Display updated file after each write?Y/N\n---->")
+    if display_result=="Y":
+        display_delay=input("How many times do you want to see the updated file?(0 means always,1 means every other input)\n---->")
+        if type_check(display_delay,"pos_int+0")!="Y":
+            display_delay=int(dislay_delay)
+        else:
+            print("Defaulting to everytime.")
+            display_delay=0
+    if display_result=="Y":
+        while terminate!="Y":
+            terminate="Y"
+    else:
+        while terminate!="Y":
+            terminate="Y"
+    print("File write module end.\n----------------")
+
+def type_check(arg_1,arg_2):
+    inpt=arg_1
+    data_type=arg_2
+    dt=data_type
+    match="M"
+    if dt=="pos_int":
+        try:
+            inpt=int(inpt)
+            if inpt>0:
+                match="Y"
+            else:
+                macth="N"
+        except:
+            match="N" 
+    elif dt=="neg_int":
+        try:
+            inpt=int(inpt)
+            if inpt<0:
+                match="Y"
+            else:
+                macth="N"
+        except:
+            match="N"
+    elif dt=="int":
+        try:
+            inpt=int(inpt)
+            match="Y"
+        except:
+            match="N"
+    elif dt=="pos_int+0":
+        try:
+            inpt=int(inpt)
+            if inpt>=0:
+                match="Y"
+            else:
+                macth="N"
+        except:
+            match="N"
+    elif dt=="neg_int+0":
+        try:
+            inpt=int(inpt)
+            if inpt<=0:
+                match="Y"
+            else:
+                macth="N"
+        except:
+            match="N"
+    elif dt=="str":
+        if type(inpt)==type("str"):
+            match="Y"
+        else:
+            match="N"
+    return(match)
 
 def busy_spin():
     leave="N"                   ###replace naive implentation later
     while leave!="Y":
         leave=input("Procede?Y/N\n---->")
+    
 
 def close():
     close="NO"
