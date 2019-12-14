@@ -16,6 +16,7 @@ def main():
     busy_spin()
     file_append(file_name)
     busy_spin()
+    file_add(file_name)
     close()
 
 def init():
@@ -70,55 +71,15 @@ def file_read(arg_1):
     final_offset=input("Final offset(note that this is measured from the start of the file)?\n---->")
     text = file.read().strip().split()
     size = sum(len(word) for word in text)
-    type_check_init_offset="N"
-    type_check_final_offset="N"
-    checks_passed="N"
-    try:                                    ####refactor checks into separate function...( check()?) and needs to be able to handle str input
-        initial_offset=int(initial_offset)
-        type_check_init_offset="Y"
-    except:
-        print("Initial offset should be a postive integer")
-    if initial_offset<0:                                    #####WARN: all checks are assuming that 0 means the start of a file#####
-        type_check_init_offset="N"
-        print("Initial offset should be a postive integer")
-    try:
-        final_offset=int(final_offset)
-        type_check_final_offset="Y"
-    except:
-        type_check_final_offset="N"
-        print("Final offset should be a postive integer")
-    if final_offset<0:
-        type_check_final_offset="N"
-        print("Final offset should be a postive integer")
-    if type_check_init_offset=="N" or type_check_final_offset=="N":
-        print("Defaulting to full file")
-        initial_offset=0
-        final_offset=size-1
-        if final_offset<0:      #handle a null file(size=0)
-            final_offset=0
-        checks_passed="Y"
-    if checks_passed!="Y":
-        if initial_offset>size or final_offset>size:
-            print("Both initial and final offset may not be more than the maxinum amount of characters in the file.")
-            print("Defaulting to reading full file.")
-            initial_offset=0
-            final_offset=size-1
-            if final_offset<0:
-                    final_offset=0
-        else:
-            if final_offset<initial_offset:
-                print("Defaulting to full file")
-                initial_offset=0
-                final_offset=size-1
-                if final_offset<0:
-                    final_offset=0
+    x=type_check_2_offset(initial_offset,final_offset,file_name)
+    initial_offset=x[0]
+    final_offset=x[1]
     if final_offset==0:
         file.seek(initial_offset)
         data=file.read()
     else:
-        file.seek(initial_offset)
-        file.seek(final_offset-initial_offset,1)    ##update scince this methold does not work to read up to a limit
-        data=file.read()
+        file.seek(initial_offset)    ##update scince this methold does not work to read up to a limit
+        data=file.read(final_offset-initial_offset)
     if initial_offset==final_offset and initial_offset==0:
         print("The file "+str(file_name)+" is blank/empty.")    #handle null file
     else:
@@ -143,6 +104,7 @@ def file_append(arg_1):
         print("File append module end.\n----------------")
     else:
         print("Module aborted")
+        print("File append module end.\n----------------")
 
 def file_add(arg_1):
     file_name=arg_1
@@ -156,13 +118,88 @@ def file_add(arg_1):
         else:
             print("Defaulting to everytime.")
             display_delay=0
+    file=open(file_name,"r+")
     if display_result=="Y":
+        display_counter=0
         while terminate!="Y":
-            terminate="Y"
+            type_int="N"
+            offset=input("Where should the data be inserted?\n---->")
+            if type_check(offset,"pos_int+0")!="Y":
+                offset=0
+                print("The offset was not an integer vaule <=0.\nDefaulting to start of file.")
+            else:
+                offset=int(offset)
+            data=input("Data to write?\n---->")
+            file.seek(offset)
+            file.write(data)
+            if display_counter==display_delay:
+                print("File was written with "+str(data)+" at offset "+str(offset)+".")
+                display_counter=0
+            display_counter=display_counter+1
+            type_int="N"
+            terminate=input("Exit module loop?Y/N\n---->")
     else:
         while terminate!="Y":
-            terminate="Y"
+            type_int="N"
+            offset=input("Where should the data be inserted?\n---->")
+            if type_check(offset,"pos_int+0")!="Y":
+                offset=0
+                print("The offset was not an integer vaule <=0.\nDefaulting to start of file.")
+            else:
+                offset=int(offset)
+            data=input("Data to write?\n---->")
+            file.seek(offset)
+            file.write(data)
+            type_int="N"
+            terminate=input("Exit module loop?Y/N\n---->")
     print("File write module end.\n----------------")
+
+def type_check_2_offset(arg_1,arg_2,arg_3):
+    initial_offset=arg_1
+    final_offset=arg_2
+    checks_passed="N"
+    file_name=arg_3
+    file=open(file_name,"r")
+    text = file.read().strip().split()
+    size = sum(len(word) for word in text)
+    if type_check(initial_offset,"pos_int+0")!="Y":
+        print("Initial offset should be a postive integer")
+        checks_passed="N"
+    else:
+        initial_offset=int(initial_offset)
+        checks_passed="Y"
+    if type_check(final_offset,"pos_int+0")!="Y":
+        print("Final offset should be a postive integer")
+        checks_passed="N"
+    else:
+        if checks_passed=="N":
+            checks_passed="N"
+        else:
+            final_offset=int(final_offset)
+            checks_passed="Y"
+    if checks_passed=="N":
+        print("Defaulting to full file")
+        initial_offset=0
+        final_offset=size-1
+        if final_offset<0:      #handle a null file(size=0)
+            final_offset=0
+        checks_passed="Y"
+    if initial_offset>size or final_offset>size:
+        print("Both initial and final offset may not be more than the maxinum amount of characters in the file.")
+        print("Defaulting to reading full file.")
+        initial_offset=0
+        final_offset=size-1
+        if final_offset<0:
+            final_offset=0
+    else:
+        if final_offset<initial_offset:
+            print("Final offset can not be less than the initial offset.\nDefaulting to full file")
+            initial_offset=0
+            final_offset=size-1
+            if final_offset<0:
+                final_offset=0
+    file.close()
+    return(initial_offset,final_offset)
 
 def type_check(arg_1,arg_2):
     inpt=arg_1
