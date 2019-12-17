@@ -153,6 +153,15 @@ def file_add(arg_1):
             type_int="N"
             terminate=input("Exit module loop?Y/N\n---->")
     print("File write module end.\n----------------")
+    
+def file_overwrite(arg_1):
+    file_name=arg_1
+    enable_overwrite=input("Do you want to overwrite a portion(or all) of the file?Y/N\n---->")
+    if enable_overwrite=="Y":
+        initial_offset=input("")
+        
+    else:
+        print("File overwrite module aborted.\n----------------")
 
 def type_check_2_offset(arg_1,arg_2,arg_3):
     initial_offset=arg_1
