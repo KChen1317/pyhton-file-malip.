@@ -159,7 +159,11 @@ def file_overwrite(arg_1):
     enable_overwrite=input("Do you want to overwrite a portion(or all) of the file?Y/N\n---->")
     if enable_overwrite=="Y":
         initial_offset=input("")
-        
+        if type_check(initial_offset,"pos_init+0")=="Y":
+            initial_offset=init(initial_offset)
+        else:
+            initial_offset=0
+            print("error")
     else:
         print("File overwrite module aborted.\n----------------")
 
