@@ -159,11 +159,25 @@ def file_overwrite(arg_1):
     enable_overwrite=input("Do you want to overwrite a portion(or all) of the file?Y/N\n---->")
     if enable_overwrite=="Y":
         initial_offset=input("")
+        file=open(file_name,"rw")
+        text = file.read().strip().split()
+        size = sum(len(word) for word in text)
         if type_check(initial_offset,"pos_init+0")=="Y":
-            initial_offset=init(initial_offset)
+            initial_offset=int(initial_offset)
+            if initial_offset<=size:
+               initial_offset=0
+               print("Initial offset must has a maxinum up to the file size.\nDefaulting to start of file.") 
         else:
             initial_offset=0
-            print("error")
+            print("Initial offset must be a interger >=0.\nDefaulting to start of file.")
+        file.seek(0)
+        print("File is\n"+str(file.read()))
+        data=input("data?\n---->")
+        file.seek(initial_offset)
+        file.write(data)
+        print()
+        file.close()
+        print("")
     else:
         print("File overwrite module aborted.\n----------------")
 
